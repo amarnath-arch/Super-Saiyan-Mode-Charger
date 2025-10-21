@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Super Saiyan Charger</title>
+    <link rel="stylesheet" href="./style/index.css" />
+  </head>
+  <body>
+    <article class="card">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <img src="initgoku.png" alt="charging image" id="character-img" />
+      <!-- timer -->
+      <input id="timer" value="0.00" />
+      <span
+        id="play-pause-button"
+        class="play-pause"
+        onclick="intializeTimer()"
+      >
+        ▶
+      </span>
+    </article>
+    <script src="./script/script.js"></script>
+    <script>
+      let timerInput = document.getElementById("timer");
+      let playPauseButton = document.getElementById("play-pause-button");
+      let cardImage = document.getElementById("character-img");
+
+      let runningState = false;
+      let intervalId;
+      let initCachedTimer;
+      let progressInitialized = false;
+
+      let initState = "initgoku.png";
+
+      let inChargingState =
+        "https://gifdb.com/images/high/black-and-white-dragonball-z-goku-screaming-xy0yo3m8c73esvib.gif";
+
+      let completedChargingState =
+        "https://media.tenor.com/-2nVDkRVkMQAAAAM/tgg-bekfastbek.gif";
+
+      let imageState = initState;
+
+      function updateProgress(init, final) {
+        console.log(init, final);
+        console.log(
+          "progress is : ",
+          parseFloat(parseFloat(init - final / init) * 100)
+        );
+        // document.getElementById("progress-bar").style.width = `${progress}%`;
+      }
+
+      function countDown() {
+        let currentTimer = parseFloat(timerInput.value);
+        if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
+
+        cardImage.setAttribute("src", inChargingState);
+        console.log(cardImage);
+
+        intervalId = setInterval(function () {
+          currentTimer -= 0.01;
+          //   updateProgress(initCachedTimer, currentTimer);
+          if (currentTimer <= 0) {
+            cardImage.setAttribute("src", completedChargingState);
+            currentTimer = 0;
+            playPauseButton.innerHTML = "▶";
+            timerInput.setAttribute("style", "color : red");
+            clearInterval(intervalId);
+          }
+          timerInput.value = currentTimer.toFixed(2);
+        }, 1000);
+      }
+
+      function intializeTimer() {
+        let currentTimer = parseFloat(timerInput.value).toFixed(2);
+
+        if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
+
+        imageState = inChargingState;
+
+        timerInput.setAttribute("style", "color : black");
+
+        if (!runningState) {
+          runningState = true;
+          playPauseButton.innerHTML = "⏸";
+          countDown();
+        } else {
+          runningState = false;
+          playPauseButton.innerHTML = "▶";
+          clearInterval(intervalId);
+        }
+      }
+    </script>
+  </body>
+</html>
