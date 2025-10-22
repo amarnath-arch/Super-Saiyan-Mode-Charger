@@ -8,91 +8,182 @@
   </head>
   <body>
     <article class="card">
-      <div class="progress-bar-container">
+      <!-- <div class="progress-bar-container">
         <div class="progress-bar" id="progress-bar"></div>
-      </div>
+      </div> -->
 
       <img src="initgoku.png" alt="charging image" id="character-img" />
       <!-- timer -->
-      <input id="timer" value="0.00" />
-      <span
-        id="play-pause-button"
-        class="play-pause"
-        onclick="intializeTimer()"
-      >
+      <div style="overflow: hidden">
+        <input id="timer-hour" class="timer" value="00" />
+        <span>:</span>
+        <input id="timer-minutes" class="timer" value="00" />
+        <span>:</span>
+        <input id="timer-seconds" class="timer" value="00" />
+      </div>
+      <span id="play-pause-button" class="play-pause" onclick="start()">
         ▶
       </span>
     </article>
     <script src="./script/script.js"></script>
     <script>
-      let timerInput = document.getElementById("timer");
-      let playPauseButton = document.getElementById("play-pause-button");
-      let cardImage = document.getElementById("character-img");
+      // let timerInput = document.getElementById("timer");
+      // let playPauseButton = document.getElementById("play-pause-button");
+      // let cardImage = document.getElementById("character-img");
+
+      // let runningState = false;
+      // let intervalId;
+      // let initCachedTimer;
+      // let progressInitialized = false;
+
+      // let initState = "initgoku.png";
+
+      // let inChargingState =
+      //   "https://gifdb.com/images/high/black-and-white-dragonball-z-goku-screaming-xy0yo3m8c73esvib.gif";
+
+      // let completedChargingState =
+      //   "https://media.tenor.com/-2nVDkRVkMQAAAAM/tgg-bekfastbek.gif";
+
+      // let imageState = initState;
+
+      // function updateProgress(init, final) {
+      //   console.log(init, final);
+      //   console.log(
+      //     "progress is : ",
+      //     parseFloat(parseFloat(init - final / init) * 100)
+      //   );
+      //   // document.getElementById("progress-bar").style.width = `${progress}%`;
+      // }
+
+      // function countDown() {
+      //   let currentTimer = parseFloat(timerInput.value);
+      //   if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
+
+      //   cardImage.setAttribute("src", inChargingState);
+      //   console.log(cardImage);
+
+      //   intervalId = setInterval(function () {
+      //     currentTimer -= 0.01;
+      //     //   updateProgress(initCachedTimer, currentTimer);
+      //     if (currentTimer <= 0) {
+      //       cardImage.setAttribute("src", completedChargingState);
+      //       currentTimer = 0;
+      //       playPauseButton.innerHTML = "▶";
+      //       timerInput.setAttribute("style", "color : red");
+      //       clearInterval(intervalId);
+      //     }
+      //     timerInput.value = currentTimer.toFixed(2);
+      //   }, 1000);
+      // }
+
+      // function intializeTimer() {
+      //   let currentTimer = parseFloat(timerInput.value).toFixed(2);
+
+      //   if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
+
+      //   imageState = inChargingState;
+
+      //   timerInput.setAttribute("style", "color : black");
+
+      //   if (!runningState) {
+      //     runningState = true;
+      //     playPauseButton.innerHTML = "⏸";
+      //     countDown();
+      //   } else {
+      //     runningState = false;
+      //     playPauseButton.innerHTML = "▶";
+      //     clearInterval(intervalId);
+      //   }
+      // }
 
       let runningState = false;
       let intervalId;
-      let initCachedTimer;
-      let progressInitialized = false;
-
-      let initState = "initgoku.png";
-
-      let inChargingState =
-        "https://gifdb.com/images/high/black-and-white-dragonball-z-goku-screaming-xy0yo3m8c73esvib.gif";
-
-      let completedChargingState =
-        "https://media.tenor.com/-2nVDkRVkMQAAAAM/tgg-bekfastbek.gif";
-
-      let imageState = initState;
-
-      function updateProgress(init, final) {
-        console.log(init, final);
-        console.log(
-          "progress is : ",
-          parseFloat(parseFloat(init - final / init) * 100)
-        );
-        // document.getElementById("progress-bar").style.width = `${progress}%`;
-      }
 
       function countDown() {
-        let currentTimer = parseFloat(timerInput.value);
-        if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
-
-        cardImage.setAttribute("src", inChargingState);
-        console.log(cardImage);
-
         intervalId = setInterval(function () {
-          currentTimer -= 0.01;
-          //   updateProgress(initCachedTimer, currentTimer);
-          if (currentTimer <= 0) {
-            cardImage.setAttribute("src", completedChargingState);
-            currentTimer = 0;
-            playPauseButton.innerHTML = "▶";
-            timerInput.setAttribute("style", "color : red");
-            clearInterval(intervalId);
+          let currentSeconds = parseInt(
+            document.getElementById("timer-seconds").value
+          );
+          let currentMinutes = parseInt(
+            document.getElementById("timer-minutes").value
+          );
+          let currentHour = parseInt(
+            document.getElementById("timer-hour").value
+          );
+
+          console.log(currentSeconds, currentMinutes, currentHour);
+
+          currentSeconds -= 1;
+
+          if (currentSeconds < 0) {
+            if (currentMinutes > 0) {
+              currentMinutes -= 1;
+              currentSeconds = (currentSeconds + 60) % 60;
+            } else {
+              if (currentHour > 0) {
+                currentHour -= 1;
+                currentMinutes -= 1;
+                currentMinutes = (currentMinutes + 60) % 60;
+                currentSeconds = (currentSeconds + 60) % 60;
+              }
+            }
           }
-          timerInput.value = currentTimer.toFixed(2);
+
+          if (currentHour == 0 && currentMinutes == 0 && currentSeconds <= 0) {
+            clearInterval(intervalId);
+            document.getElementById("play-pause-button").innerHTML = "▶";
+          }
+
+          document.getElementById("timer-seconds").value =
+            currentSeconds.toString();
+          document.getElementById("timer-minutes").value =
+            currentMinutes.toString();
+          document.getElementById("timer-hour").value = currentHour.toString();
         }, 1000);
       }
 
-      function intializeTimer() {
-        let currentTimer = parseFloat(timerInput.value).toFixed(2);
-
-        if (!currentTimer || currentTimer == NaN || currentTimer <= 0) return;
-
-        imageState = inChargingState;
-
-        timerInput.setAttribute("style", "color : black");
-
+      function start() {
+        alert("Iam here");
         if (!runningState) {
           runningState = true;
-          playPauseButton.innerHTML = "⏸";
+          document.getElementById("play-pause-button").innerHTML = "⏸";
           countDown();
         } else {
           runningState = false;
-          playPauseButton.innerHTML = "▶";
+          document.getElementById("play-pause-button").innerHTML = "▶";
           clearInterval(intervalId);
         }
       }
+
+      document
+        .getElementById("timer-hour")
+        .addEventListener("input", (event) => {
+          console.log("Current value:", event.target.value);
+          // alert(event.target.value);
+        });
+
+      document
+        .getElementById("timer-minutes")
+        .addEventListener("input", (event) => {
+          console.log("event value : ", parseInt(event.target.value));
+          if (parseInt(event.target.value) >= 60) {
+            console.log("got it ");
+            event.target.value = 59;
+          }
+          console.log("Current value:", event.target.value);
+          // alert(event.target.value);
+        });
+
+      document
+        .getElementById("timer-seconds")
+        .addEventListener("input", (event) => {
+          if (parseInt(event.target.value) >= 60) {
+            console.log("got it ");
+            event.target.value = 59;
+          }
+          console.log("Current value:", event.target.value);
+          // alert(event.target.value);
+        });
     </script>
   </body>
 </html>
