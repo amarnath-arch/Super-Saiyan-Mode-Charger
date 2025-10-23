@@ -8,11 +8,17 @@
   </head>
   <body>
     <article class="card">
-      <!-- <div class="progress-bar-container">
+      <h2>Prepare yourself for the stretch!!</h2>
+
+      <p id="progress-count">0%</p>
+      <div class="progress-bar-container">
         <div class="progress-bar" id="progress-bar"></div>
-      </div> -->
+      </div>
 
       <img src="initgoku.png" alt="charging image" id="character-img" />
+
+      <h5 style="margin: 20px; font-size: 18px">Charge</h5>
+
       <!-- timer -->
       <div style="overflow: hidden">
         <input id="timer-hour" class="timer" value="00" />
@@ -98,18 +104,28 @@
 
       let runningState = false;
       let intervalId;
+      let initProgressVal;
+
+      let secondsElement = document.getElementById("timer-seconds");
+      let minutesElement = document.getElementById("timer-minutes");
+      let hourElement = document.getElementById("timer-hour");
+
+      let progressBarElement = document.getElementById("progress-bar");
 
       function countDown() {
+        if (!initProgressVal) {
+          initProgressVal =
+            3600 * parseInt(hourElement.value) +
+            60 * parseInt(minutesElement.value) +
+            parseInt(secondsElement.value);
+        }
+
+        console.log(initProgressVal);
+
         intervalId = setInterval(function () {
-          let currentSeconds = parseInt(
-            document.getElementById("timer-seconds").value
-          );
-          let currentMinutes = parseInt(
-            document.getElementById("timer-minutes").value
-          );
-          let currentHour = parseInt(
-            document.getElementById("timer-hour").value
-          );
+          let currentSeconds = parseInt(secondsElement.value);
+          let currentMinutes = parseInt(minutesElement.value);
+          let currentHour = parseInt(hourElement.value);
 
           console.log(currentSeconds, currentMinutes, currentHour);
 
@@ -129,23 +145,54 @@
             }
           }
 
+          // progress bar
+          const progressFound =
+            (parseFloat(
+              initProgressVal -
+                (3600 * currentHour + 60 * currentMinutes + currentSeconds)
+            ) /
+              parseFloat(initProgressVal)) *
+            100;
+
+          console.log("progressFond is : ", progressFound * 100);
+          progressBarElement.setAttribute("style", `width: ${progressFound}%`);
+          document.getElementById("progress-count").innerHTML = `${parseInt(
+            progressFound
+          )}%`;
+          console.log(progressBarElement);
+
           if (currentHour == 0 && currentMinutes == 0 && currentSeconds <= 0) {
+            if (currentSeconds == 0) {
+              secondsElement.value = currentSeconds.toString();
+            }
             clearInterval(intervalId);
+            initProgressVal = undefined;
             document.getElementById("play-pause-button").innerHTML = "▶";
+            return;
           }
 
-          document.getElementById("timer-seconds").value =
-            currentSeconds.toString();
-          document.getElementById("timer-minutes").value =
-            currentMinutes.toString();
-          document.getElementById("timer-hour").value = currentHour.toString();
+          secondsElement.value = currentSeconds.toString();
+          minutesElement.value = currentMinutes.toString();
+          hourElement.value = currentHour.toString();
         }, 1000);
       }
 
       function start() {
-        alert("Iam here");
+        if (
+          parseInt(secondsElement.value) <= 0 &&
+          parseInt(hourElement.value) <= 0 &&
+          parseInt(minutesElement.value) <= 0
+        ) {
+          alert("Value should be greater than zero");
+          return;
+        }
+
         if (!runningState) {
           runningState = true;
+          if (!initProgressVal) {
+            progressBarElement.setAttribute("style", "width:0%");
+            document.getElementById("progress-count").innerHTML = "0%";
+          }
           document.getElementById("play-pause-button").innerHTML = "⏸";
           countDown();
         } else {
